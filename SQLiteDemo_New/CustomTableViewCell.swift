@@ -9,7 +9,14 @@
 import UIKit
 
 class CustomTableViewCell: UITableViewCell {
-
+    
+    
+    @IBOutlet weak var namelbl: UILabel!
+    
+    @IBOutlet weak var fieldlbl: UILabel!
+    
+    @IBOutlet weak var yearlbl: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

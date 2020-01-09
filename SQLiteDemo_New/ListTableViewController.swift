@@ -9,9 +9,14 @@
 import UIKit
 
 class ListTableViewController: UITableViewController {
-
+    
+    var dbObj:ManageDB!
+    var data = [[String:Any]]()
+       
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        dbObj = ManageDB()
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -19,48 +24,80 @@ class ListTableViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
+    
+    override func viewWillAppear(_ animated: Bool)
+    {
+        super.viewWillAppear(animated)
+        
+        data = dbObj.RunQuery(with: "select * from StudentInfo order by Student_Name")
+        tableView.reloadData()
+    }
+    override func didReceiveMemoryWarning()
+    {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return data.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        return 1
     }
 
-    /*
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
 
-        // Configure the cell...
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomTableViewCell
+
+        let item = data[indexPath.section]
+        
+        cell.namelbl!.text = "\(item["Student_Name"]!)"
+        cell.fieldlbl!.text = "\(item["Student_Course"]!)"
+        cell.yearlbl!.text = "\(item["Current_Year"]!)"
 
         return cell
     }
-    */
+    
 
-    /*
+    
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
     }
-    */
+    
 
-    /*
+    
     // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
+    {
+        
+        if editingStyle == .delete
+        {
             // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
+            //tableView.deleteRows(at: [indexPath], with: .fade)
+            let cmdText = "delete from StudentInfo where id = \(data[indexPath.section]["id"]!)"
+                       if(dbObj.RunCommand(with: cmdText))
+                       {
+                           print("\(cmdText) Executed")
+                       }
+                       else{
+                           print("\(cmdText) Error")
+                       }
+                       data.remove(at: indexPath.section)
+                       tableView.reloadData()
+        }
+        else if editingStyle == .insert
+        {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
     }
-    */
 
     /*
     // Override to support rearranging the table view.
